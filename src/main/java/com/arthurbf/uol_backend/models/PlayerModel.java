@@ -20,4 +20,7 @@ public class PlayerModel {
     private String email;
 
     private String phone_number;
+
+    @NotBlank
+    private String codename;
 }
