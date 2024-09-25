@@ -1,15 +1,21 @@
 package com.arthurbf.uol_backend.models;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.UUID;
 
 @Entity
 @Table(name = "TB_PLAYERS")
+@Getter
+@Setter
 public class PlayerModel {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
     @NotBlank
@@ -23,4 +29,12 @@ public class PlayerModel {
 
     @NotBlank
     private String codename;
+
+    @Enumerated(EnumType.STRING)
+    private GroupName groupName;
+
+    public enum GroupName {
+        AVENGERS,
+        JUSTICE_LEAGUE
+    }
 }
