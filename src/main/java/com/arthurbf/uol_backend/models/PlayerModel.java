@@ -28,7 +28,7 @@ public class PlayerModel {
     private String codename;
 
     @Enumerated(EnumType.STRING)
-    private GroupName groupName;
+    private GroupName group_name;
 
     public enum GroupName {
         AVENGERS,
@@ -76,10 +76,10 @@ public class PlayerModel {
     }
 
     public GroupName getGroupName() {
-        return groupName;
+        return group_name;
     }
 
     public void setGroupName(GroupName groupName) {
-        this.groupName = groupName;
+        this.group_name = groupName;
     }
 }

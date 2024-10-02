@@ -31,7 +31,7 @@ public class PlayerService {
         }
 
         String codename = null;
-        if(playerDTO.group() == PlayerModel.GroupName.AVENGERS) {
+        if(playerDTO.group_name() == PlayerModel.GroupName.AVENGERS) {
             codename = groupService.getAvailableAvengerCodename();
         }
         else {
@@ -41,9 +41,9 @@ public class PlayerService {
             throw new RuntimeException("No codenames available!");
         }
         BeanUtils.copyProperties(playerDTO, player);
+        player.setGroupName(playerDTO.group_name());
         player.setCodename(codename);
         savePlayer(player);
         return player;
     }
-
 }
