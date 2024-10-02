@@ -1,13 +1,17 @@
 package com.arthurbf.uol_backend.services;
 
 import com.arthurbf.uol_backend.dtos.PlayerDTO;
+import com.arthurbf.uol_backend.exceptions.NoAvailableCodenameException;
+import com.arthurbf.uol_backend.exceptions.UserAlreadyExistsException;
 import com.arthurbf.uol_backend.models.PlayerModel;
 import com.arthurbf.uol_backend.repositories.PlayerRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class PlayerService {
@@ -24,12 +28,21 @@ public class PlayerService {
         playerRepository.save(player);
     }
 
+    public boolean deletePlayer(UUID id) {
+        Optional<PlayerModel> player = playerRepository.findById(id);
+        if (player.isEmpty()) {
+            return false;
+        }
+        playerRepository.delete(player.get());
+        return true;
+    }
+
     @Transactional
     public PlayerDTO createPlayer(PlayerDTO playerDTO) {
         PlayerModel player = new PlayerModel();
         var existingPlayer = playerRepository.findByEmail(playerDTO.email());
         if (existingPlayer.isPresent()){
-            throw new RuntimeException("User already exists");
+            throw new UserAlreadyExistsException();
         }
         String codename = null;
         if(playerDTO.group_name() == PlayerModel.GroupName.AVENGERS) {
@@ -39,7 +52,7 @@ public class PlayerService {
             codename = getAvailableCodename(groupService.getJusticeLeagueCodenames());
         }
         if(codename == null) {
-            throw new RuntimeException("No codenames available!");
+            throw new NoAvailableCodenameException();
         }
         BeanUtils.copyProperties(playerDTO, player);
         player.setGroupName(playerDTO.group_name());
@@ -55,5 +68,12 @@ public class PlayerService {
             }
         }
         return null;
+    }
+
+    public List<PlayerDTO> getAllPlayers() {
+        return playerRepository.findAll().stream()
+                .map(player -> new PlayerDTO(player.getName(), player.getEmail(),
+                        player.getPhone_number(), player.getGroupName(), player.getCodename()))
+                .collect(Collectors.toList());
     }
 }
