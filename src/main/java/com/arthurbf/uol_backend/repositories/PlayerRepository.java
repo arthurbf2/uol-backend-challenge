@@ -8,4 +8,5 @@ import java.util.UUID;
 
 public interface PlayerRepository extends JpaRepository<PlayerModel, UUID> {
     Optional<PlayerModel> findByEmail(String email);
+    Optional<PlayerModel> findByCodename(String codename);
 }

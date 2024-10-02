@@ -7,6 +7,8 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class PlayerService {
 
@@ -23,19 +25,18 @@ public class PlayerService {
     }
 
     @Transactional
-    public PlayerModel createPlayer(PlayerDTO playerDTO) {
+    public PlayerDTO createPlayer(PlayerDTO playerDTO) {
         PlayerModel player = new PlayerModel();
         var existingPlayer = playerRepository.findByEmail(playerDTO.email());
         if (existingPlayer.isPresent()){
             throw new RuntimeException("User already exists");
         }
-
         String codename = null;
         if(playerDTO.group_name() == PlayerModel.GroupName.AVENGERS) {
-            codename = groupService.getAvailableAvengerCodename();
+            codename = getAvailableCodename(groupService.getAvengerCodenames());
         }
         else {
-            codename = groupService.getAvailableJusticeLeagueCodename();
+            codename = getAvailableCodename(groupService.getJusticeLeagueCodenames());
         }
         if(codename == null) {
             throw new RuntimeException("No codenames available!");
@@ -44,6 +45,15 @@ public class PlayerService {
         player.setGroupName(playerDTO.group_name());
         player.setCodename(codename);
         savePlayer(player);
-        return player;
+        return new PlayerDTO(player.getName(), player.getEmail(), player.getPhone_number(), player.getGroupName(), player.getCodename());
+    }
+
+    public String getAvailableCodename(List<String> codenames) {
+        for (String codename : codenames) {
+            if (playerRepository.findByCodename(codename).isEmpty()) {
+                return codename;
+            }
+        }
+        return null;
     }
 }
