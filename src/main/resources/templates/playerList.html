@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Jogadores Cadastrados</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        table, th, td {
+            border: 1px solid black;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+        button {
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+<h1>Jogadores cadastrados</h1>
+<table>
+    <thead>
+    <tr>
+        <th>Nome</th>
+        <th>E-mail</th>
+        <th>Telefone</th>
+        <th>Codinome</th>
+        <th>Grupo</th>
+        <th>Ações</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="player : ${players}">
+        <td th:text="${player.name}"></td>
+        <td th:text="${player.email}"></td>
+        <td th:text="${player.phone_number}"></td>
+        <td th:text="${player.codename}"></td>
+        <td th:text="${player.group_name}"></td>
+        <td>
+            <form th:action="@{/players/{id}(id=${player.id})}" method="post" style="display: inline;">
+                <button type="submit">Excluir</button>
+            </form>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+<button onclick="window.location.href='/players/form'">Novo Jogador</button>
+</body>
+</html>

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Cadastro de Jogador</title>
+</head>
+<body>
+<h1>Cadastro de Jogador</h1>
+<form action="/players" method="POST">
+  <label for="name">Nome:</label>
+  <input type="text" id="name" name="name" required><br><br>
+
+  <label for="email">E-mail:</label>
+  <input type="email" id="email" name="email" required><br><br>
+
+  <label for="phone_number">Telefone:</label>
+  <input type="tel" id="phone_number" name="phone_number" required><br><br>
+
+  <label>Escolha um grupo:</label><br>
+  <input type="radio" id="avengers" name="group_name" value="AVENGERS" required>
+  <label for="avengers">Vingadores</label><br>
+  <input type="radio" id="justiceLeague" name="group_name" value="JUSTICE_LEAGUE" required>
+  <label for="justiceLeague">Liga da Justiça</label><br><br>
+
+
+  <button type="submit">Cadastrar</button>
+  <button type="button" onclick="window.location.href='/'">Voltar para a lista</button>
+</form>
+<div th:if="${error}" class="error" style="color: red;">
+  <p th:text="${error}"></p>
+</div>
+</body>
+</html>

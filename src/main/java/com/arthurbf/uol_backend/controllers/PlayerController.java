@@ -1,16 +1,21 @@
 package com.arthurbf.uol_backend.controllers;
 
 import com.arthurbf.uol_backend.dtos.PlayerDTO;
+import com.arthurbf.uol_backend.exceptions.NoAvailableCodenameException;
+import com.arthurbf.uol_backend.exceptions.UserAlreadyExistsException;
 import com.arthurbf.uol_backend.services.PlayerService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.UUID;
 
 
-@RestController
+@Controller
+@RequestMapping("/players")
 public class PlayerController {
     private final PlayerService playerService;
 
@@ -18,21 +23,25 @@ public class PlayerController {
         this.playerService = playerService;
     }
 
-    @PostMapping("/players")
-    public ResponseEntity<PlayerDTO> createPlayer(@RequestBody PlayerDTO playerDTO) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(playerService.createPlayer(playerDTO));
-    }
-
-    @GetMapping("/players")
-    public ResponseEntity<List<PlayerDTO>> getPlayers(){
-        return ResponseEntity.status(HttpStatus.OK).body(playerService.getAllPlayers());
-    }
-
-    @PostMapping("/players/{id}")
-    public ResponseEntity<String> deletePlayer(@PathVariable UUID id) {
-        if(playerService.deletePlayer(id)) {
-            return ResponseEntity.status(HttpStatus.OK).body("User deleted successfully");
+    @PostMapping
+    public String createPlayer(@ModelAttribute PlayerDTO playerDTO, Model model) {
+        try {
+            playerService.createPlayer(playerDTO);
+        } catch (UserAlreadyExistsException | NoAvailableCodenameException e) {
+            model.addAttribute("error", e.getMessage());
+            return "playerForm";
         }
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
+        return "redirect:/";
+    }
+
+    @PostMapping("/{id}")
+    public String deletePlayer(@PathVariable UUID id) {
+        playerService.deletePlayer(id);
+        return "redirect:/";
+    }
+
+    @GetMapping("/form")
+    public String showPlayerForm() {
+        return "playerForm";
     }
 }
