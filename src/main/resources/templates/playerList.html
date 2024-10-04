@@ -40,8 +40,11 @@
         <td th:text="${player.codename}"></td>
         <td th:text="${player.group_name}"></td>
         <td>
-            <form th:action="@{/players/{id}(id=${player.id})}" method="post" style="display: inline;">
+            <form th:action="@{/players/delete/{id}(id=${player.id})}" method="post" style="display: inline;">
                 <button type="submit">Excluir</button>
+            </form>
+            <form th:action="@{/players/edit/{id}(id=${player.id})}" method="get" style="display: inline;">
+                <button type="submit">Editar</button>
             </form>
         </td>
     </tr>

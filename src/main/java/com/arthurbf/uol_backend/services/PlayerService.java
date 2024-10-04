@@ -24,10 +24,6 @@ public class PlayerService {
         this.groupService = groupService;
     }
 
-    public void savePlayer(PlayerModel player){
-        playerRepository.save(player);
-    }
-
     public void deletePlayer(UUID id) {
         Optional<PlayerModel> player = playerRepository.findById(id);
         if (player.isEmpty()) {
@@ -56,7 +52,7 @@ public class PlayerService {
         BeanUtils.copyProperties(playerDTO, player); // does not transfer the enum for some reason
         player.setGroupName(playerDTO.group_name());
         player.setCodename(codename);
-        savePlayer(player);
+        playerRepository.save(player);
     }
 
     public String getAvailableCodename(List<String> codenames) {
@@ -73,5 +69,23 @@ public class PlayerService {
                 .map(player -> new PlayerDTO(player.getId(), player.getName(), player.getEmail(),
                         player.getPhone_number(), player.getGroupName(), player.getCodename()))
                 .collect(Collectors.toList());
+    }
+
+    public void updatePlayer(UUID id, String name, String phone_number) {
+        PlayerModel player = playerRepository.findById(id)
+                .orElseThrow(RuntimeException::new);
+        player.setName(name);
+        player.setPhone_number(phone_number);
+        playerRepository.save(player);
+    }
+
+    public PlayerDTO getPlayer(UUID id) {
+        Optional<PlayerModel> player = playerRepository.findById(id);
+        if (player.isEmpty()) {
+            throw new RuntimeException();
+        }
+        var playerModel = player.get();
+        return new PlayerDTO(playerModel.getId(), playerModel.getName(), playerModel.getEmail(),
+                playerModel.getPhone_number(), playerModel.getGroupName(), playerModel.getCodename());
     }
 }

@@ -34,7 +34,7 @@ public class PlayerController {
         return "redirect:/";
     }
 
-    @PostMapping("/{id}")
+    @PostMapping("/delete/{id}")
     public String deletePlayer(@PathVariable UUID id) {
         playerService.deletePlayer(id);
         return "redirect:/";
@@ -43,5 +43,17 @@ public class PlayerController {
     @GetMapping("/form")
     public String showPlayerForm() {
         return "playerForm";
+    }
+
+    @GetMapping("/edit/{id}")
+    public String showEditForm(@PathVariable UUID id, Model model) {
+        model.addAttribute("player", playerService.getPlayer(id));
+        return "editForm";
+    }
+
+    @PatchMapping("/edit/{id}")
+    public String editPlayer(@PathVariable UUID id, @ModelAttribute PlayerDTO playerDTO) {
+        playerService.updatePlayer(id, playerDTO.name(), playerDTO.phone_number());
+        return "redirect:/";
     }
 }
